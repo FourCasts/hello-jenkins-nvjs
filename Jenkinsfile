@@ -53,7 +53,6 @@ pipeline {
                 }
                 }
             }
-        }
 
         stage('Push Images to Registry') {
             steps {
