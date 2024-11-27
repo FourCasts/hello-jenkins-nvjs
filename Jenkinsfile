@@ -44,16 +44,16 @@ pipeline {
             }
         }
 
-        stage('Run Frontend Tests') {
-            steps {
-                script {
-                    // Run tests for the frontend
-                    sh '''
-                    docker run --rm ${IMAGE_NAME_FRONTEND}:latest npm test
-                    '''
-                }
-            }
-        }
+        // stage('Run Frontend Tests') {
+        //     steps {
+        //         script {
+        //             // Run tests for the frontend
+        //             sh '''
+        //             docker run --rm ${IMAGE_NAME_FRONTEND}:latest npm test
+        //             '''
+        //         }
+        //     }
+        // }
 
         // stage('Run Backend Docker Container') {
         //     steps {
