@@ -1,6 +1,7 @@
 <template>
   <div>
       <h1>API Demo</h1>
+      <h1>API Demo</h1>
       <p>App Version: {{ version }}</p>
       <button @click="fetchHello">Get Hello</button>
       <button @click="fetchGreet">Get Greet</button>
