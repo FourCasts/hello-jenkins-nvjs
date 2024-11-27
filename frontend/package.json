@@ -1,5 +1,5 @@
 {
-  "name": "frontend",
+  "name": "hello-jekins-nodejs-frontend",
   "version": "0.1.0",
   "private": true,
   "scripts": {

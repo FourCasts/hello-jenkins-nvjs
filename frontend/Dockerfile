@@ -1,27 +1,31 @@
-# Step 1: Use Node.js image to build the app
+# Use Node.js image to build the app
 FROM node:16 AS build
 
-# Step 2: Set the working directory inside the container
+# Set the working directory
 WORKDIR /app
 
-# Step 3: Copy package.json and install dependencies
+# Copy the package.json and install dependencies
 COPY frontend/package.json /app/package.json
 RUN npm install
 
-# Step 4: Copy the rest of the frontend code
+# Copy the rest of the frontend code
 COPY frontend /app
 
-# Step 5: Build the frontend app
+# Build the frontend app
+ARG VERSION
+ENV VERSION=$VERSION
+
+# Build the frontend app
 RUN npm run build
 
-# Step 6: Use a lightweight web server to serve the static files
+# Use Nginx to serve the frontend app
 FROM nginx:alpine
 
-# Step 7: Copy built files from the build stage to the Nginx container
+# Copy built files to Nginx container
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Step 8: Expose the port that Nginx uses
+# Expose the port
 EXPOSE 80
 
-# Step 9: Nginx will automatically serve the files
+# Run Nginx to serve the app
 CMD ["nginx", "-g", "daemon off;"]
