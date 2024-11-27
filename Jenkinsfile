@@ -6,6 +6,7 @@ pipeline {
         IMAGE_NAME_FRONTEND = 'frontend-app'
         IMAGE_NAME_BACKEND = 'backend-api'
         REGISTRY = 'registry.gnod.lol'
+        K8S_NAMESPACE = 'default'
     }
     stages {
         stage('Checkout Code') {
@@ -33,7 +34,7 @@ pipeline {
             }
         }
 
-        stage('Run Backend Tests') {
+        stage('Run Test') {
             steps {
                 script {
                     // Run tests for the backend
@@ -44,39 +45,12 @@ pipeline {
             }
         }
 
-        // stage('Run Frontend Tests') {
-        //     steps {
-        //         script {
-        //             // Run tests for the frontend
-        //             sh '''
-        //             docker run --rm ${IMAGE_NAME_FRONTEND}:latest npm test
-        //             '''
-        //         }
-        //     }
-        // }
-
-        // stage('Run Backend Docker Container') {
-        //     steps {
-        //         script {
-        //             // Run the backend container (replace with your server's IP or host)
-        //             sh "docker run -d --name ${IMAGE_NAME_BACKEND} -p 3000:3000 ${IMAGE_NAME_BACKEND}:latest"
-        //         }
-        //     }
-        // }
-
-        // stage('Run Frontend Docker Container') {
-        //     steps {
-        //         script {
-        //             // Run the frontend container (replace with your server's IP or host)
-        //             sh "docker run -d --name ${IMAGE_NAME_FRONTEND} -p 80:80 ${IMAGE_NAME_FRONTEND}:latest"
-        //         }
-        //     }
-        // }
         stage('Tag Docker Images for Registry') {
             steps {
                 script {
                     sh "docker tag ${IMAGE_NAME_FRONTEND}:latest ${REGISTRY}/${IMAGE_NAME_FRONTEND}:latest"
                     sh "docker tag ${IMAGE_NAME_BACKEND}:latest ${REGISTRY}/${IMAGE_NAME_BACKEND}:latest"
+                }
                 }
             }
         }
@@ -89,6 +63,24 @@ pipeline {
                 }
             }
         }
+        // // Deploy to minikube with terraform
+        // stage('Terraform Init') {
+        //     steps {
+        //         script {
+        //             // Initialize Terraform
+        //             sh 'terraform init'
+        //         }
+        //     }
+        // }
+
+        // stage('Terraform Apply') {
+        //     steps {
+        //         script {
+        //             // Apply Terraform configuration to deploy to Kubernetes
+        //             sh 'terraform apply -auto-approve'
+        //         }
+        //     }
+        // }
 
         stage('Clean Up') {
             steps {
