@@ -5,6 +5,7 @@ pipeline {
         BACKEND_DIR = 'backend'
         IMAGE_NAME_FRONTEND = 'frontend-app'
         IMAGE_NAME_BACKEND = 'backend-api'
+        REGISTRY = 'registry.gnod.lol'
     }
     stages {
         stage('Checkout Code') {
@@ -32,6 +33,28 @@ pipeline {
             }
         }
 
+        stage('Run Backend Tests') {
+            steps {
+                script {
+                    // Run tests for the backend
+                    sh '''
+                    docker run --rm ${IMAGE_NAME_BACKEND}:latest npm test
+                    '''
+                }
+            }
+        }
+
+        stage('Run Frontend Tests') {
+            steps {
+                script {
+                    // Run tests for the frontend
+                    sh '''
+                    docker run --rm ${IMAGE_NAME_FRONTEND}:latest npm test
+                    '''
+                }
+            }
+        }
+
         // stage('Run Backend Docker Container') {
         //     steps {
         //         script {
@@ -49,6 +72,23 @@ pipeline {
         //         }
         //     }
         // }
+        stage('Tag Docker Images for Registry') {
+            steps {
+                script {
+                    sh "docker tag ${IMAGE_NAME_FRONTEND}:latest ${REGISTRY}/${IMAGE_NAME_FRONTEND}:latest"
+                    sh "docker tag ${IMAGE_NAME_BACKEND}:latest ${REGISTRY}/${IMAGE_NAME_BACKEND}:latest"
+                }
+            }
+        }
+
+        stage('Push Images to Registry') {
+            steps {
+                script {
+                    sh "docker push ${REGISTRY}/${IMAGE_NAME_FRONTEND}:latest"
+                    sh "docker push ${REGISTRY}/${IMAGE_NAME_BACKEND}:latest"
+                }
+            }
+        }
 
         stage('Clean Up') {
             steps {
@@ -63,7 +103,7 @@ pipeline {
     post {
         always {
             // Clean up containers on Jenkins agent after pipeline
-            sh "docker rm -f ${IMAGE_NAME_FRONTEND} ${IMAGE_NAME_BACKEND}"
+            sh "docker rm -f ${IMAGE_NAME_FRONTEND} ${IMAGE_NAME_BACKEND} || true"
         }
     }
 }
