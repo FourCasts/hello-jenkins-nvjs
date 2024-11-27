@@ -32,23 +32,23 @@ pipeline {
             }
         }
 
-        stage('Run Backend Docker Container') {
-            steps {
-                script {
-                    // Run the backend container (replace with your server's IP or host)
-                    sh "docker run -d --name ${IMAGE_NAME_BACKEND} -p 3000:3000 ${IMAGE_NAME_BACKEND}:latest"
-                }
-            }
-        }
+        // stage('Run Backend Docker Container') {
+        //     steps {
+        //         script {
+        //             // Run the backend container (replace with your server's IP or host)
+        //             sh "docker run -d --name ${IMAGE_NAME_BACKEND} -p 3000:3000 ${IMAGE_NAME_BACKEND}:latest"
+        //         }
+        //     }
+        // }
 
-        stage('Run Frontend Docker Container') {
-            steps {
-                script {
-                    // Run the frontend container (replace with your server's IP or host)
-                    sh "docker run -d --name ${IMAGE_NAME_FRONTEND} -p 80:80 ${IMAGE_NAME_FRONTEND}:latest"
-                }
-            }
-        }
+        // stage('Run Frontend Docker Container') {
+        //     steps {
+        //         script {
+        //             // Run the frontend container (replace with your server's IP or host)
+        //             sh "docker run -d --name ${IMAGE_NAME_FRONTEND} -p 80:80 ${IMAGE_NAME_FRONTEND}:latest"
+        //         }
+        //     }
+        // }
 
         stage('Clean Up') {
             steps {
