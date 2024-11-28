@@ -6,7 +6,7 @@ pipeline {
         IMAGE_NAME_FRONTEND = 'frontend-app'
         IMAGE_NAME_BACKEND = 'backend-api'
         REGISTRY_URL = 'registry.gnod.lol'
-        BRANCH_NAME = "${env.BRANCH_NAME}" // Captures the branch name being built
+        // BRANCH_NAME = "${env.BRANCH_NAME}" // Captures the branch name being built
     }
     stages {
         stage('Checkout Code') {
@@ -19,15 +19,18 @@ pipeline {
         stage('Determine Environment') {
             steps {
                 script {
+                    // Get the current branch name
+                    def branch = env.BRANCH_NAME
+                    echo "Building for branch: ${branch}"
                     // Validate the branch and set the environment tag
-                    if (BRANCH_NAME == 'main') {
+                    if (branch == 'main') {
                         env.ENV_TAG = 'main'
-                    } else if (BRANCH_NAME == 'staging') {
+                    } else if (branch == 'staging') {
                         env.ENV_TAG = 'staging'
-                    } else if (BRANCH_NAME == 'dev') {
+                    } else if (branch == 'dev') {
                         env.ENV_TAG = 'dev'
                     } else {
-                        error "Unsupported branch: ${BRANCH_NAME}. Allowed branches are main, staging, and dev."
+                        error "Unsupported branch: ${branch}. Allowed branches are main, staging, and dev."
                     }
                 }
             }
