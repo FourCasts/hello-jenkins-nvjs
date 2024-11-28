@@ -63,7 +63,7 @@ pipeline {
                 script {
                     // Run tests for the backend using the correct ENV_TAG
                     sh """
-                    docker run --rm ${IMAGE_NAME_BACKEND}:${ENV_TAG} sh -c "npm test"
+                    docker run --rm ${REGISTRY_URL}/${IMAGE_NAME_BACKEND}:${ENV_TAG} sh -c "npm test"
                     """
                 }
             }
