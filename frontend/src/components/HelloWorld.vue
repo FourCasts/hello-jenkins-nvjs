@@ -1,8 +1,10 @@
 <template>
   <div>
       <h1>API Demo</h1>
-      <button @click="fetchHello">Get Hello</button>
-      <button @click="fetchGreet">Get Greet</button>
+      <p>To Access backend use aseriousdemo.api.gnod.lol/api/hello</p>
+      <p>Or /api/greet</p>
+      <button @click="fetchHello">Get /api/Hello</button>
+      <button @click="fetchGreet">Get /api/Greet</button>
       <p v-if="url">Request made to: {{ url }}</p>
       <p v-if="response">Response: {{ response }}</p>
   </div>
@@ -14,6 +16,7 @@ import api from '../api';
 export default {
   data() {
       return {
+          version: process.env.VUE_APP_VERSION,
           url: '', // To store the URL of the request
           response: '', // To store the response or error message
       };
