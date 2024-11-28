@@ -3,8 +3,8 @@
       <h1>API Demo</h1>
       <p>To Access backend use aseriousdemo.api.gnod.lol/api/hello</p>
       <p>Or /api/greet</p>
-      <button @click="fetchHello">Get Hello</button>
-      <button @click="fetchGreet">Get Greet</button>
+      <button @click="fetchHello">Get /api/Hello</button>
+      <button @click="fetchGreet">Get /api/Greet</button>
       <p v-if="url">Request made to: {{ url }}</p>
       <p v-if="response">Response: {{ response }}</p>
   </div>
