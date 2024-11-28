@@ -52,8 +52,12 @@ To run both the backend and frontend using Docker, follow these steps:
 Navigate to the root of the repository and build the backend image:
 
 ```bash
-docker build -t backend-api -f backend/Dockerfile .
-docker run -d --name backend-api -p 3000:3000 backend-api
+# docker build -t backend-api -f backend/Dockerfile .
+docker build -t registry.gnod.lol/backend-api:dev -f backend/Dockerfile .
+docker run -d --name backend \
+    -p 3000:3000 \
+    --env ENVIRONMENT=dev \
+    registry.gnod.lol/backend-api:dev
 ```
 
 This will build the backend Docker image and start the container, exposing port `3000`.
@@ -63,8 +67,11 @@ This will build the backend Docker image and start the container, exposing port 
 Similarly, build and run the frontend Docker image:
 
 ```bash
-docker build -t frontend-app -f frontend/Dockerfile .
-docker run -d --name frontend-app -p 80:80 frontend-app
+docker build -t registry.gnod.lol/frontend-app:dev -f frontend/Dockerfile .
+docker run -d --name frontend \
+    -p 3000:3000 \
+    --env ENVIRONMENT=dev \
+    registry.gnod.lol/frontend-app:dev
 ```
 
 This will build the frontend Docker image and start the container, exposing port `80`.

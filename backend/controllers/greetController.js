@@ -1,3 +1,7 @@
 exports.greet = (req, res) => {
-    res.send('Greetings from the REST API!');
+    const environment = process.env.ENVIRONMENT || 'unknown';
+    res.json({
+        message: 'Greetings from the backend!',
+        environment: environment,
+    });
 };
