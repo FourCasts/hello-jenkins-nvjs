@@ -1,0 +1,76 @@
+name: Check Pull Request Approval
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, review_requested, ready_for_review, review_request_removed, edited]
+    branches:
+      - staging-master
+  pull_request_review: # Trigger when a review is submitted
+    types: [submitted] # Only trigger on review submission
+  workflow_dispatch: # Allows manual triggering
+  
+jobs:
+  check-approval:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Check if approval is needed
+        uses: actions/github-script@v6
+        id: check_approval
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: reviews } = await github.rest.pulls.listReviews({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+            });
+
+            const authorUsername = context.payload.pull_request.user.login;
+            const exemptUsername = 'aizatnazran'; 
+
+            // Default approval status
+            let approvalStatus = 'NOT_APPROVED';
+
+            // Check if the PR author is the exempt user
+            if (authorUsername === exemptUsername) {
+              console.log(`User ${exemptUsername} is exempt from approval requirement.`);
+              approvalStatus = 'EXEMPT';
+            } else {
+              // Log all reviews for debugging
+              console.log("Reviews: ", reviews);
+
+              // Check if there's at least one approval for other users
+              const isApproved = reviews.some(review => review.state === 'APPROVED');
+
+              if (isApproved) {
+                approvalStatus = 'APPROVED';
+              }
+            }
+
+            // Set output based on approval status
+            core.setOutput("approval_status", approvalStatus);
+
+            // Set commit status
+            const commitSha = context.payload.pull_request.head.sha;
+            const state = approvalStatus === 'APPROVED' ? 'success' : 'failure';
+
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: commitSha,
+              state: state,
+              context: 'PR Approval Check',
+              description: approvalStatus === 'APPROVED' ? 'The pull request has been approved.' : 'The pull request requires approval.',
+            });
+
+      - name: Set status based on approval
+        if: steps.check_approval.outputs.approval_status == 'APPROVED'
+        run: echo "PR has been approved or is exempt."
+        
+      - name: Notify if not approved
+        if: steps.check_approval.outputs.approval_status != 'APPROVED'
+        run: echo "PR is not approved. Approval is required."
